@@ -311,26 +311,6 @@ footer{background:var(--mulberry-xdark);padding:52px 24px;text-align:center}
 @media print{nav,.hero,.hero-btns,.dark-section,.print-btn{display:none!important}.section,.cl-section,.faq-section{border-top:1px solid #ccc;padding:32px 0}body{background:#fff}}
 
 /* ── TRANSLATE WIDGET ── */
-/* Hide Google's own UI — we drive it via our custom dropdown */
-#goog-translate-element{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-/* Kill the Google Translate banner in every form it takes */
-#goog-te-banner-frame,
-.goog-te-banner-frame,
-.goog-te-balloon-frame,
-.skiptranslate iframe,
-iframe.goog-te-banner-frame {
-  display:none!important;
-  visibility:hidden!important;
-  height:0!important;
-  max-height:0!important;
-  overflow:hidden!important;
-}
-body{
-  top:0!important;
-  position:static!important;
-  margin-top:0!important;
-  padding-top:0!important;
-}
 .lang-switcher{position:relative;flex-shrink:0}
 .lang-btn{
   display:flex;align-items:center;gap:6px;
@@ -419,7 +399,6 @@ body{
 <div id="scrollBar" style="position:fixed;top:0;left:0;height:3px;width:0;background:var(--mint);z-index:9999;pointer-events:none;transition:width .1s linear" role="progressbar" aria-label="Page scroll progress"></div>
 
 <!-- GOOGLE TRANSLATE (hidden — driven by custom dropdown) -->
-<div id="goog-translate-element"></div>
 
 <!-- SVG SPRITE -->
 <svg style="display:none" aria-hidden="true">
@@ -474,7 +453,6 @@ body{
         <a onclick="translateTo('ms')" role="menuitem" tabindex="0"><span class="lang-flag">🇲🇾</span><span class="lang-name">Malay</span><span class="lang-native">Bahasa Melayu</span></a>
         <a onclick="translateTo('tr')" role="menuitem" tabindex="0"><span class="lang-flag">🇹🇷</span><span class="lang-name">Turkish</span><span class="lang-native">Türkçe</span></a>
         <a onclick="translateTo('ar')" role="menuitem" tabindex="0" dir="rtl"><span class="lang-flag">🇸🇦</span><span class="lang-name">Arabic</span><span class="lang-native">العربية</span></a>
-        <a onclick="translateTo('en')" role="menuitem" tabindex="0"><span class="lang-flag">🇬🇧</span><span class="lang-name">English</span><span class="lang-native">Reset</span></a>
       </div>
     </div>
   </div>
@@ -1872,16 +1850,6 @@ updateProgress();
 var _sb=document.getElementById('scrollBar');
 if(_sb)window.addEventListener('scroll',function(){_sb.style.width=Math.min((window.scrollY/(document.body.scrollHeight-window.innerHeight))*100,100)+'%';},{passive:true});
 // ── TRANSLATE ──
-// We load Google's widget invisibly, then drive it from our custom dropdown.
-// This works on local files AND hosted sites — Google reads the page DOM directly.
-function googleTranslateElementInit(){
-  new google.translate.TranslateElement({
-    pageLanguage:"en",
-    includedLanguages:"fr,ru,no,nl,de,id,ms,tr,ar",
-    autoDisplay:false
-  },"goog-translate-element");
-}
-
 function toggleLang(e){
   e.stopPropagation();
   var menu=document.getElementById("langMenu");
@@ -1891,40 +1859,12 @@ function toggleLang(e){
   btn.setAttribute("aria-expanded",isOpen?"false":"true");
 }
 
-function translateTo(lang,attempt){
-  // Close menu immediately
+function translateTo(lang){
   document.getElementById("langMenu").classList.remove("open");
   document.getElementById("langBtn").setAttribute("aria-expanded","false");
-
-  if(lang==="en"){
-    // Reset: reload the page without translation
-    var c=document.cookie.split(";");
-    for(var i=0;i<c.length;i++){
-      var n=c[i].trim().split("=")[0];
-      if(n==="googtrans"){document.cookie=n+"=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";}
-    }
-    location.reload();
-    return;
-  }
-
-  attempt=attempt||0;
-  var combo=document.querySelector(".goog-te-combo");
-
-  if(combo){
-    combo.value=lang;
-    combo.dispatchEvent(new Event("change"));
-    // Update button label briefly
-    var btn=document.getElementById("langBtn");
-    var labels={"fr":"Français","ru":"Русский","no":"Norsk","nl":"NL","de":"DE","id":"ID","ms":"MY","tr":"TR","ar":"AR"};
-    var origHTML=btn.innerHTML;
-    btn.querySelector(".lang-btn-text").textContent=labels[lang]||lang.toUpperCase();
-    setTimeout(function(){btn.querySelector(".lang-btn-text").textContent="Translate";},3000);
-  } else if(attempt<15){
-    // Widget not ready yet — retry in 300ms
-    setTimeout(function(){translateTo(lang,attempt+1);},300);
-  } else {
-    alert("Translation service unavailable. Please ensure you are connected to the internet.");
-  }
+  if(lang==="en"){return;}
+  var url=encodeURIComponent(window.location.href);
+  window.open("https://translate.google.com/translate?sl=en&tl="+lang+"&u="+url,"_blank");
 }
 
 // Close on outside click
@@ -1943,60 +1883,6 @@ document.getElementById("langMenu").addEventListener("keydown",function(e){
     document.getElementById("langBtn").focus();
   }
 });
-</script>
-
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
-<script>
-// ── KILL GOOGLE TRANSLATE BANNER ──
-// Google injects a banner iframe and pushes body down — destroy it instantly
-function killBanner(){
-  // Hide every banner variant
-  var selectors=[
-    '#goog-te-banner-frame',
-    '.goog-te-banner-frame',
-    '.goog-te-balloon-frame'
-  ];
-  selectors.forEach(function(sel){
-    var el=document.querySelector(sel);
-    if(el){
-      el.style.cssText='display:none!important;height:0!important;max-height:0!important;visibility:hidden!important;';
-      if(el.parentNode){
-        el.parentNode.style.height='0';
-        el.parentNode.style.overflow='hidden';
-      }
-    }
-  });
-  // Reset body position that Google shifts down
-  document.body.style.top='0';
-  document.body.style.marginTop='0';
-  document.body.style.paddingTop='0';
-  document.body.style.position='static';
-}
-
-// Run immediately
-killBanner();
-
-// Watch for Google adding the banner dynamically after translation
-var _bannerObserver=new MutationObserver(function(mutations){
-  mutations.forEach(function(m){
-    if(m.addedNodes.length||m.attributeName==='style'){
-      killBanner();
-    }
-  });
-});
-_bannerObserver.observe(document.documentElement,{
-  childList:true,
-  subtree:true,
-  attributes:true,
-  attributeFilter:['style','class']
-});
-// Also poll for the first 10 seconds after page load as a safety net
-var _bannerPoll=0;
-var _bannerInterval=setInterval(function(){
-  killBanner();
-  _bannerPoll++;
-  if(_bannerPoll>20) clearInterval(_bannerInterval);
-},500);
 </script>
 </body>
 </html>

@@ -38,7 +38,6 @@ nav.scrolled{background:rgba(30,13,26,.92);backdrop-filter:blur(16px);border-bot
 
 /* translate */
 #gt-el{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.goog-te-banner-frame,#goog-te-banner-frame,.skiptranslate iframe{display:none!important;height:0!important}
 body{top:0!important}
 .lang-sw{position:relative;flex-shrink:0}
 .lang-btn{display:flex;align-items:center;gap:6px;background:var(--mint-dim);border:1px solid var(--mint-border);color:var(--ink-soft);font-size:.62rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:5px;cursor:pointer;white-space:nowrap;min-height:36px;transition:background .15s,color .15s}
@@ -336,17 +335,16 @@ footer{background:var(--mu-deep);padding:64px 32px 32px;border-top:1px solid var
 </style>
 </head>
 <body>
-<div id="gt-el"></div>
 
 <!-- NAV -->
 <nav id="mainNav">
   <div class="nav-inner">
-    <a href="index.html" class="nav-brand">
+    <a href="homepage.html" class="nav-brand">
       <span class="nav-arabic notranslate" translate="no" lang="ar">المسلك المُيسَّر</span>
       <span class="nav-en">Al-Maslak al-Muyassar</span>
     </a>
     <div class="nav-links">
-      <a href="index.html">Home</a>
+      <a href="homepage.html">Home</a>
       <a href="egypt-guide.html">Egypt Guide</a>
       <a href="egypt-guide.html#study">Institutes</a>
       <a href="egypt-guide.html#accommodation">Housing</a>
@@ -370,7 +368,6 @@ footer{background:var(--mu-deep);padding:64px 32px 32px;border-top:1px solid var
         <a onclick="doTranslate('ms')" role="menuitem"><span class="lf">🇲🇾</span><span class="ln">Malay</span><span class="lnv">Bahasa Melayu</span></a>
         <a onclick="doTranslate('tr')" role="menuitem"><span class="lf">🇹🇷</span><span class="ln">Turkish</span><span class="lnv">Türkçe</span></a>
         <a onclick="doTranslate('ar')" role="menuitem" dir="rtl"><span class="lf">🇸🇦</span><span class="ln">Arabic</span><span class="lnv">العربية</span></a>
-        <a onclick="doTranslate('en')" role="menuitem"><span class="lf">🇬🇧</span><span class="ln">English</span><span class="lnv">Reset</span></a>
       </div>
     </div>
     <a href="egypt-guide.html" class="nav-cta">Open Guide →</a>
@@ -1034,24 +1031,15 @@ strip.addEventListener('mousemove',function(e){if(!isDragging)return;e.preventDe
 ['mouseup','mouseleave'].forEach(function(ev){strip.addEventListener(ev,function(){isDragging=false;});});
 
 // ── TRANSLATE ──
-function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'fr,ru,no,nl,de,id,ms,tr,ar',autoDisplay:false},'gt-el');}
 function toggleLang(e){e.stopPropagation();var m=document.getElementById('langMenu'),b=document.getElementById('langBtn'),o=m.classList.contains('open');m.classList.toggle('open');b.setAttribute('aria-expanded',o?'false':'true');}
-function doTranslate(lang,att){
+function doTranslate(lang){
   document.getElementById('langMenu').classList.remove('open');
   document.getElementById('langBtn').setAttribute('aria-expanded','false');
-  if(lang==='en'){location.reload();return;}
-  att=att||0;
-  var c=document.querySelector('.goog-te-combo');
-  if(c){c.value=lang;c.dispatchEvent(new Event('change'));document.getElementById('langBtnTxt').textContent='✓ Translated';setTimeout(function(){document.getElementById('langBtnTxt').textContent='Translate';},3000);}
-  else if(att<15){setTimeout(function(){doTranslate(lang,att+1);},300);}
+  if(lang==='en'){return;}
+  var url=encodeURIComponent(window.location.href);
+  window.open('https://translate.google.com/translate?sl=en&tl='+lang+'&u='+url,'_blank');
 }
 document.addEventListener('click',function(e){var s=document.getElementById('langSwitcher');if(s&&!s.contains(e.target)){document.getElementById('langMenu').classList.remove('open');}});
-
-// ── KILL GOOGLE BANNER ──
-function kb(){['#goog-te-banner-frame','.goog-te-banner-frame'].forEach(function(s){var el=document.querySelector(s);if(el){el.style.cssText='display:none!important;height:0!important;';if(el.parentNode)el.parentNode.style.height='0';}});document.body.style.top='0';document.body.style.position='static';}
-kb();new MutationObserver(kb).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']});
-var _ki=0,_kv=setInterval(function(){kb();if(++_ki>20)clearInterval(_kv);},500);
 </script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
 </body>
 </html>
