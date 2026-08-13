@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finding Housing in Egypt — المسلك المُيسَّر</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sand:#F2EDE4; --parchment:#E8E0D0; --ink:#1C1C1A; --ink-soft:#3D3C38;
+    --gold:#B88C3A; --gold-dim:#C9A55A22; --teal:#2A6B6E; --teal-light:#EAF4F4;
+    --warn:#7A3B2E; --warn-bg:#F9EDE9; --rule:#D5C9B5;
+  }
+  body { background:var(--sand); color:var(--ink); font-family:'Inter',sans-serif; font-size:17px; line-height:1.75; -webkit-font-smoothing:antialiased; }
+
+  header { background:var(--ink); padding:28px 24px 22px; text-align:center; }
+  .brand-arabic { font-family:'Amiri',serif; font-size:1.6rem; color:var(--gold); display:block; margin-bottom:4px; }
+  .brand-english { font-size:0.72rem; color:#999; letter-spacing:0.18em; text-transform:uppercase; }
+
+  .hero { background:var(--ink); color:var(--sand); padding:52px 24px 56px; text-align:center; border-bottom:3px solid var(--gold); }
+  .hero-eyebrow { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:18px; }
+  .hero h1 { font-family:'Lora',serif; font-size:clamp(1.9rem,5vw,2.8rem); font-weight:600; line-height:1.2; max-width:640px; margin:0 auto 18px; color:#fff; }
+  .hero-sub { font-size:1rem; color:#aaa; max-width:520px; margin:0 auto; line-height:1.65; }
+
+  .container { max-width:720px; margin:0 auto; padding:0 20px; }
+
+  /* CURRENCY SWITCHER */
+  .currency-bar { background:#fff; border:1px solid var(--rule); border-radius:10px; padding:16px 20px; margin:36px 0 8px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .currency-bar label { font-size:0.82rem; font-weight:600; color:var(--ink-soft); letter-spacing:0.05em; white-space:nowrap; }
+  .currency-bar select { font-family:'Inter',sans-serif; font-size:0.92rem; border:1.5px solid var(--rule); border-radius:6px; padding:7px 12px; background:var(--sand); color:var(--ink); cursor:pointer; flex:1; min-width:160px; }
+  .currency-bar select:focus { outline:2px solid var(--gold); }
+  .currency-note { font-size:0.75rem; color:#999; margin-bottom:32px; padding-left:4px; }
+
+  .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:48px; }
+  .quick-card { background:#fff; border:1px solid var(--rule); border-radius:8px; padding:18px 16px; }
+  .quick-card .label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:6px; }
+  .quick-card .value { font-family:'Lora',serif; font-size:1.25rem; font-weight:600; color:var(--ink); line-height:1.25; }
+  .quick-card .note { font-size:0.78rem; color:#888; margin-top:4px; }
+
+  section { padding:48px 0; border-top:1px solid var(--rule); }
+  h2 { font-family:'Lora',serif; font-size:1.5rem; font-weight:600; color:var(--ink); margin-bottom:6px; line-height:1.25; }
+  .section-num { font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); font-weight:600; display:block; margin-bottom:10px; }
+  p { margin-bottom:16px; color:var(--ink-soft); }
+  p:last-child { margin-bottom:0; }
+
+  .callout { border-left:3px solid var(--teal); background:var(--teal-light); padding:16px 18px; border-radius:0 6px 6px 0; margin:24px 0; }
+  .callout strong { color:var(--teal); display:block; margin-bottom:4px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.08em; }
+  .callout p { margin:0; font-size:0.92rem; color:var(--ink-soft); }
+  .warn-box { border-left:3px solid var(--warn); background:var(--warn-bg); padding:16px 18px; border-radius:0 6px 6px 0; margin:24px 0; }
+  .warn-box strong { color:var(--warn); display:block; margin-bottom:4px; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.08em; }
+  .warn-box p { margin:0; font-size:0.92rem; }
+
+  .area-grid { display:grid; gap:12px; margin:24px 0; }
+  .area-card { background:#fff; border:1px solid var(--rule); border-radius:8px; padding:16px 18px; display:grid; grid-template-columns:1fr auto; align-items:start; gap:8px; }
+  .area-name { font-family:'Lora',serif; font-weight:600; font-size:1rem; color:var(--ink); margin-bottom:4px; }
+  .area-desc { font-size:0.85rem; color:#777; line-height:1.5; }
+  .area-badge { font-size:0.7rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; padding:4px 10px; border-radius:20px; white-space:nowrap; align-self:start; }
+  .badge-green { background:#E6F4EA; color:#2E7D4F; }
+  .badge-amber { background:#FEF3E2; color:#9A6B1E; }
+  .badge-blue  { background:#E8F0FE; color:#1A56A8; }
+  .badge-grey  { background:#F0EDE8; color:#777; }
+
+  .checklist { list-style:none; margin:20px 0; }
+  .checklist li { padding:10px 0 10px 32px; position:relative; border-bottom:1px solid var(--parchment); font-size:0.95rem; color:var(--ink-soft); }
+  .checklist li:last-child { border-bottom:none; }
+  .checklist li::before { content:''; position:absolute; left:0; top:14px; width:16px; height:16px; border:2px solid var(--gold); border-radius:3px; }
+
+  .cost-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
+  .cost-card { background:#fff; border:1px solid var(--rule); border-radius:8px; padding:16px; }
+  .cost-card .label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:6px; }
+  .cost-card .value { font-family:'Lora',serif; font-size:1.2rem; font-weight:600; color:var(--ink); }
+  .cost-card .note { font-size:0.78rem; color:#888; margin-top:4px; }
+
+  .scam-list { list-style:none; margin:20px 0; counter-reset:scam; }
+  .scam-list li { counter-increment:scam; padding:14px 14px 14px 48px; position:relative; background:#fff; border:1px solid var(--rule); border-radius:6px; margin-bottom:8px; font-size:0.92rem; color:var(--ink-soft); }
+  .scam-list li::before { content:counter(scam); position:absolute; left:14px; top:14px; font-family:'Lora',serif; font-weight:600; color:var(--warn); font-size:1rem; }
+  .scam-list li strong { color:var(--ink); display:block; margin-bottom:3px; font-size:0.9rem; }
+
+  .q-list { list-style:none; margin:20px 0; }
+  .q-list li { padding:12px 0 12px 20px; border-bottom:1px solid var(--parchment); font-size:0.92rem; color:var(--ink-soft); position:relative; }
+  .q-list li::before { content:'›'; position:absolute; left:0; color:var(--gold); font-size:1.2rem; line-height:1.4; }
+  .q-list li:last-child { border-bottom:none; }
+
+  footer { background:var(--ink); color:#888; text-align:center; padding:36px 24px; font-size:0.82rem; line-height:1.8; margin-top:60px; }
+  footer .arabic { font-family:'Amiri',serif; font-size:1.1rem; color:var(--gold); display:block; margin-bottom:10px; }
+
+  @media(max-width:520px){
+    .quick-grid,.cost-grid{grid-template-columns:1fr;}
+    .area-card{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="brand-arabic">المسلك المُيسَّر</span>
+  <span class="brand-english">Al-Maslak al-Muyassar</span>
+</header>
+
+<div class="hero">
+  <p class="hero-eyebrow">Student Guide · Housing</p>
+  <h1>Finding a Flat in Egypt as a Student of Knowledge</h1>
+  <p class="hero-sub">Everything you need to know before you land — where to live, what to pay, how to find it, and what to avoid.</p>
+</div>
+
+<div class="container">
+
+  <!-- CURRENCY SWITCHER -->
+  <div class="currency-bar">
+    <label>Show prices in:</label>
+    <select id="currencySelect" onchange="setCurrency(this.value)">
+      <option value="GBP">🇬🇧 British Pound (£)</option>
+      <option value="USD">🇺🇸 US Dollar ($)</option>
+      <option value="EUR">🇪🇺 Euro (€)</option>
+      <option value="AUD">🇦🇺 Australian Dollar (A$)</option>
+      <option value="CAD">🇨🇦 Canadian Dollar (C$)</option>
+      <option value="NOK">🇳🇴 Norwegian Krone (kr)</option>
+      <option value="SAR">🇸🇦 Saudi Riyal (ر.س)</option>
+    </select>
+  </div>
+  <p class="currency-note">Prices are approximate and based on student accounts from 2024–2025. Exchange rates are estimates — always check current rates before travelling.</p>
+
+  <!-- QUICK FACTS -->
+  <div class="quick-grid">
+    <div class="quick-card">
+      <div class="label">Best Area</div>
+      <div class="value">Nasr City</div>
+      <div class="note">Districts 8–10 are closest to the institutes</div>
+    </div>
+    <div class="quick-card">
+      <div class="label">Typical Cost</div>
+      <div class="value"><span class="price" data-gbp-low="70" data-gbp-high="150"></span>/mo</div>
+      <div class="note">Shared flat, bills usually included</div>
+    </div>
+    <div class="quick-card">
+      <div class="label">Best Time to Arrive</div>
+      <div class="value">Oct – Mar</div>
+      <div class="note">Cooler weather, easier adjustment</div>
+    </div>
+    <div class="quick-card">
+      <div class="label">Recommended Card</div>
+      <div class="value">Starling / Revolut</div>
+      <div class="note">No foreign transaction fees</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <section>
+    <span class="section-num">01 — Where to Live</span>
+    <h2>Nasr City is Where You Want to Be</h2>
+    <p>If you are coming to Egypt to study Arabic, Quran, or the Islamic sciences, Nasr City (مدينة نصر — Madinat Nasr) is almost certainly where you should live. It is the unofficial hub of the foreign Muslim student community in Cairo. Nearly every major institute — Fajr Center, Al-Ibaanah, Lisanul Arab, Ma'sarawi, and others — is located within walking distance of each other. You will find other students on your doorstep, which matters more than most people expect when you first arrive.</p>
+    <p>The best districts within Nasr City for students are the <strong>8th, 9th, and 10th districts</strong> (Hayy Thamin, Tasi', and 'Aashir). These are the closest to the institutes and where most foreign students live. If a Cairo taxi driver does not know the street name, tell them "Souq As-Sayarat in Nasr City" — this large Friday car market is a landmark almost every driver knows.</p>
+
+    <div class="area-grid">
+      <div class="area-card">
+        <div>
+          <div class="area-name">Nasr City — Districts 8, 9 & 10</div>
+          <div class="area-desc">The main student hub. Walking distance to most major institutes. High concentration of foreign Muslim students. Most affordable option. This is where the majority of students live.</div>
+        </div>
+        <span class="area-badge badge-green">Recommended</span>
+      </div>
+      <div class="area-card">
+        <div>
+          <div class="area-name">Gardenia City Compound</div>
+          <div class="area-desc">A gated compound within Nasr City. Quieter and more organised than regular Nasr City streets. Popular with families and students who prefer a calmer environment. Still within reach of the institutes.</div>
+        </div>
+        <span class="area-badge badge-green">Good for Families</span>
+      </div>
+      <div class="area-card">
+        <div>
+          <div class="area-name">Rehab City</div>
+          <div class="area-desc">A large gated residential compound about 20 minutes from Nasr City by car. Safer, greener, and more organised than most of Cairo. Higher cost of living. Best suited to families or those who prioritise comfort over convenience to institutes.</div>
+        </div>
+        <span class="area-badge badge-amber">For Families / Comfort</span>
+      </div>
+      <div class="area-card">
+        <div>
+          <div class="area-name">New Cairo / Tagammou</div>
+          <div class="area-desc">A modern, westernised area further from the institutes. Significantly more expensive. Good infrastructure and quieter streets. Some families with children prefer it for the environment. Factor in the daily commute to Nasr City.</div>
+        </div>
+        <span class="area-badge badge-blue">Families · Higher Cost</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Practical note</strong>
+      <p>Many students find that sharing a flat with 1–2 others keeps costs down significantly and means you almost always have someone to ask when you are stuck on something — especially valuable in your first few weeks.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section>
+    <span class="section-num">02 — What to Budget</span>
+    <h2>Realistic Housing Costs</h2>
+    <p>Egypt is significantly cheaper than the UK, US, or most Western countries — but costs have risen in recent years due to currency fluctuations. The figures below are based on real student accounts from 2024–2025. Always budget slightly above the minimum, especially for your first month.</p>
+
+    <div class="cost-grid">
+      <div class="cost-card">
+        <div class="label">Shared Flat (2–3 people)</div>
+        <div class="value"><span class="price" data-gbp-low="70" data-gbp-high="100"></span>/mo</div>
+        <div class="note">Bills often included. Most common student arrangement.</div>
+      </div>
+      <div class="cost-card">
+        <div class="label">Private Room</div>
+        <div class="value"><span class="price" data-gbp-low="120" data-gbp-high="150"></span>/mo</div>
+        <div class="note">Districts 8–10, Nasr City. Bills sometimes extra.</div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:20px;">
+      <strong>On bills</strong>
+      <p>Many landlords include electricity, water, and sometimes internet when renting to foreign students. Always confirm this before signing anything. Egypt's summer heat means air conditioning can cause electricity bills to spike — clarify who pays if bills are not included.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section>
+    <span class="section-num">03 — How to Find a Flat</span>
+    <h2>Where Students Actually Find Housing</h2>
+    <p>There is no central listing site for student housing in Egypt. Most flats are found through one of these channels — listed in order of what students report working best:</p>
+
+    <ul class="checklist">
+      <li><strong>WhatsApp groups — your most important resource.</strong> Once connected to other students or an institute, ask to be added to student WhatsApp groups. Flats come up here constantly and are often already vetted by someone who knows the area.</li>
+      <li><strong>Ask at your institute on arrival.</strong> Many institutes have informal notice boards or staff who know of available flats. One of the easiest routes if you arrive before finding somewhere.</li>
+      <li><strong>Facebook groups.</strong> Search "Egypt expats," "Cairo housing," "Muslims in Cairo." People post available rooms regularly. Check post dates — listings go stale quickly.</li>
+      <li><strong>Local brokers (simsars).</strong> Estate agents in Nasr City can find you something quickly but charge a fee — usually one month's rent. Only use one if you are pressed for time and willing to pay. Make sure any broker comes recommended by another student.</li>
+      <li><strong>Ask other students directly.</strong> If you know anyone who has been to Egypt, message them. Someone in your community almost certainly knows of a spare room or can add you to the right WhatsApp group.</li>
+    </ul>
+
+    <div class="warn-box">
+      <strong>Important</strong>
+      <p>Do not send money for a flat before you have physically seen it. Scams targeting foreign students exist. Always view the property in person before paying any deposit.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section>
+    <span class="section-num">04 — What to Watch Out For</span>
+    <h2>Common Housing Problems (and How to Avoid Them)</h2>
+
+    <ul class="scam-list">
+      <li>
+        <strong>Overpaying because you arrived without a local contact</strong>
+        Landlords charge more when they can see you are a new arrival with no reference point. Before agreeing to a price, ask another student what is normal for the area and flat size.
+      </li>
+      <li>
+        <strong>Electricity bills becoming unexpectedly high in summer</strong>
+        Air conditioning in the Egyptian summer consumes a lot of electricity. If bills are not included in your rent, budget extra from March onwards. Always ask the landlord what the average monthly bill looks like.
+      </li>
+      <li>
+        <strong>Landlords being unresponsive to repairs</strong>
+        It is common for landlords in Egypt to be slow when something breaks. Inspect the flat thoroughly before committing — check water pressure, all taps, electrical sockets, and any appliances included.
+      </li>
+      <li>
+        <strong>Tap water</strong>
+        Do not drink the tap water in Cairo. It is not safe to consume directly. Buy bottled water or install a filter. Budget for this — it is an ongoing cost most guides do not mention.
+      </li>
+      <li>
+        <strong>Contracts in Arabic only</strong>
+        If your landlord produces a rental contract, it will likely be in Arabic. Do not sign anything you cannot read without having someone trustworthy translate it first. A student who has been there longer or your institute may be able to help.
+      </li>
+    </ul>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section>
+    <span class="section-num">05 — Before You Commit</span>
+    <h2>Questions to Ask Before Signing Anything</h2>
+    <p>Whether you are messaging a landlord from abroad or viewing a flat in person, make sure you have clear answers to the following before you agree to anything:</p>
+
+    <ul class="q-list">
+      <li>Is electricity included in the monthly price? What about water and internet?</li>
+      <li>How much is the deposit, and under what conditions do I get it back?</li>
+      <li>Is there a written contract? Can I get a translated copy?</li>
+      <li>Who do I contact if something breaks?</li>
+      <li>Does the flat have a water filter or will I need to buy bottled water?</li>
+      <li>Is there air conditioning? Who pays for the electricity it uses?</li>
+      <li>How far is the flat from the nearest institute?</li>
+      <li>Are there other Muslim students or foreign students in the building?</li>
+      <li>Is there a washing machine, or is there a laundry nearby?</li>
+    </ul>
+  </section>
+
+  <!-- SECTION 6 -->
+  <section>
+    <span class="section-num">06 — Once You Arrive</span>
+    <h2>Getting Settled in the First Week</h2>
+    <p>Most experienced students recommend booking short-term accommodation for your first few days — even a cheap hotel or hostel in Nasr City — so you have a base while you look around in person. Trying to commit to a flat from abroad without seeing it is a common mistake.</p>
+
+    <div class="callout">
+      <strong>First week priorities</strong>
+      <p>Get a local SIM card on arrival (Vodafone Egypt, Orange, and Etisalat are the main providers). Set up Uber or InDrive for transport. Ask at your institute to be added to the student WhatsApp groups. Everything else becomes easier once you are in those groups.</p>
+    </div>
+
+    <p>For money, use a Starling or Revolut card — both work well in Egypt with no foreign transaction fees. There are exchange offices throughout Nasr City where you can get a good rate on cash. Avoid airport exchange bureaus, which offer significantly worse rates.</p>
+  </section>
+
+  <section style="text-align:center; border-top:1px solid var(--rule); padding:48px 0 32px;">
+    <h2 style="margin-bottom:12px;">Have something to add?</h2>
+    <p style="max-width:480px; margin:0 auto;">If you have studied in Egypt and something important is missing from this guide, we would genuinely like to hear from you. This is built from real student experience and gets better with every person who contributes.</p>
+  </section>
+
+</div>
+
+<footer>
+  <span class="arabic">المسلك المُيسَّر</span>
+  Built for Western students of knowledge travelling to seek 'ilm.<br>
+  May Allah make your journey easy and your studies a source of benefit for the ummah. Ameen.
+</footer>
+
+<script>
+  const rates = { GBP:1, USD:1.27, EUR:1.17, AUD:1.95, CAD:1.73, NOK:13.5, SAR:4.76 };
+  const symbols = { GBP:'£', USD:'$', EUR:'€', AUD:'A$', CAD:'C$', NOK:'kr', SAR:'ر.س' };
+  const positions = { SAR:'after', NOK:'after' }; // symbol after number
+
+  function fmt(val, cur) {
+    const rounded = Math.round(val / 5) * 5;
+    const sym = symbols[cur];
+    const after = positions[cur] === 'after';
+    return after ? `${rounded} ${sym}` : `${sym}${rounded}`;
+  }
+
+  function setCurrency(cur) {
+    const rate = rates[cur];
+    document.querySelectorAll('.price').forEach(el => {
+      const low = parseFloat(el.dataset.gbpLow) * rate;
+      const high = parseFloat(el.dataset.gbpHigh) * rate;
+      el.textContent = `${fmt(low, cur)}–${fmt(high, cur)}`;
+    });
+  }
+
+  // Initialise with GBP on load
+  setCurrency('GBP');
+</script>
+</body>
+</html>
